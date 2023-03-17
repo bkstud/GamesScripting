@@ -121,15 +121,27 @@ function main_loop()
             clear
             echo -en "Use 'wsad' to move cursor and 'p' to pick field.\n\n"
             echo "Turn: '$curr'"
-            temp_board=$(set_board_element $y $x "?" "${BOARD}")
+            yellow='\e[0;33m'
+            white='\e[0;37m'
+            character=$(get_board_element $y $x "${BOARD}")
+            temp_board=$(set_board_element $y $x "$yellow$character$white" "${BOARD}")
             print_board "${temp_board}"
         fi
         redraw=true
         
         if [ "$result" != "" ]
         then
-            echo "res=$result"
-            break
+            clear
+            echo -e "Game finished.\n"
+            
+            print_board "${BOARD}"
+
+            desription="Player '$result' wins."
+            [ "$result" == "d" ] && desription="There is no winner."
+            
+            echo -e "\n$desription\nPress ENTER to exit"
+            read
+            exit 0
         fi
         
         read -n 1 -sr input
