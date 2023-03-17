@@ -1,13 +1,33 @@
 #!/bin/bash
 
+## Global variables
 N_ROWS=3
 N_COLS=3
-n=9
+STARTING_PLAYER="o"
+CURRENT_PLAYER=$STARTING_PLAYER
 BOARD="$(printf "%0.s. " {1..9})"
+YELLOW='\e[0;33m'
+WHITE='\e[0;37m'
+SCRIPT_DIR=$(dirname -- "$0")
+## 
+
+## Utility functions
+function save_state()
+{
+    cat << EOF > $SCRIPT_DIR/.gamesave
+N_ROWS=$N_ROWS
+N_COLS=$N_COLS
+BOARD="$BOARD"
+CURRENT_PLAYER=$CURRENT_PLAYER
+EOF
+}
 
 function error() {
   echo "$@" 1>&2
 }
+##
+
+## Game related functions
 
 ## print board given as string argument
 function print_board()
@@ -101,13 +121,16 @@ function check_results()
     [ "$(echo $board | tr -d 'xo')" == "" ] && echo "d"
 }
 
+# main loop
+# args:
+# $1 - which player 'x' or 'o' starts
 function main_loop()
 {
     local x=0
     local y=0
     local temp_board="${BOARD}"
     local wrong_field=false
-    local curr="o"
+    local curr=$1
     local redraw=true
     clear
 
@@ -115,16 +138,14 @@ function main_loop()
     do
 
         result=$(check_results "$BOARD")
-        # if game isn't finished yet lets save state
         if $redraw
         then
             clear
-            echo -en "Use 'wsad' to move cursor and 'p' to pick field.\n\n"
+            echo -en "Use 'wsad' to move cursor and 'p' to pick field. Press 'x' to exit.\n\n"
             echo "Turn: '$curr'"
-            yellow='\e[0;33m'
-            white='\e[0;37m'
+
             character=$(get_board_element $y $x "${BOARD}")
-            temp_board=$(set_board_element $y $x "$yellow$character$white" "${BOARD}")
+            temp_board=$(set_board_element $y $x "$YELLOW$character$WHITE" "${BOARD}")
             print_board "${temp_board}"
         fi
         redraw=true
@@ -139,11 +160,17 @@ function main_loop()
             desription="Player '$result' wins."
             [ "$result" == "d" ] && desription="There is no winner."
             
+            # remove save as game ended
+            rm -f $SCRIPT_DIR/.gamesave
+
             echo -e "\n$desription\nPress ENTER to exit"
             read
             exit 0
         fi
         
+        # if game isn't finished yet lets save state
+        save_state
+
         read -n 1 -sr input
         case $input in
             w)
@@ -161,15 +188,16 @@ function main_loop()
             p)
                 if ! is_field_empty $y $x "$BOARD"
                 then
-                    echo "This field is already set..."
-                    echo -e "Please choose another.\n"
+                    echo -e "\nThis field is already set..."
+                    echo -e "Please choose another."
                     redraw=false
                     continue
                 fi
                 BOARD=$(set_board_element $y $x "$curr" "${BOARD}")
                 [[ $curr = x ]] && curr=o || curr=x
-                x=0
-                y=0
+            ;;
+            x)
+                exit 0;
             ;;
 
             *)
@@ -183,11 +211,56 @@ function main_loop()
         y=$((y < 0 ? 0 : y))
     done
 }
+##
 
-# new_board=$(set_board_element 1 1 "x" "${BOARD}")
-# BOARD="${new_board}"
+## main menu
+options=("New PvP" "New PvB" "Load Game")
+curr_option=0
+msg=""
+while true
+do
+    clear
+    echo -e "\nUse 'ws' to move currsor. Click 'p' to pick game option:"
+    for i in `seq 0 $((${#options[@]}-1))`
+    do
+        [ $i == $curr_option ] && echo -en $YELLOW
+        echo "-> ${options[$i]}"
+        echo -en $WHITE
+    done
+    
+    echo -en "$msg"
 
-# print_board "${board}"
+    read -n 1 -sr input
+        case $input in
+            w)
+                ((curr_option-=1))
+                msg=""
+            ;;
+            s)
+                ((curr_option+=1))
+                msg=""
+            ;;
+                p)
+                case ${options[$curr_option]} in
+                "Load Game")
+                    if ! [ -e "$SCRIPT_DIR/.gamesave" ]
+                    then
+                        msg="\n> There is no saved game please start new game.\n"
+                        continue
+                    fi
+                    source "$SCRIPT_DIR/.gamesave" 
+                    break
+                ;;
+                *)
+                    echo "picked option ${options[$curr_option]}"
+                    break;
+                ;;
+                esac
+            ;;
+        esac
+        curr_option=$((curr_option > 2 ? 2 : curr_option))
+        curr_option=$((curr_option < 0 ? 0 : curr_option))
+done
+# echo "picked option ${options[$curr_option]}"
 
-
-main_loop
+main_loop "$CURRENT_PLAYER"
