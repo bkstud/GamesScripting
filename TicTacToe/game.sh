@@ -6,6 +6,9 @@ N_COLS=3
 STARTING_PLAYER="o"
 CURRENT_PLAYER=$STARTING_PLAYER
 BOARD="$(printf "%0.s. " {1..9})"
+# mode can be pvp or pvb
+MODE=pvp
+
 YELLOW='\e[0;33m'
 WHITE='\e[0;37m'
 SCRIPT_DIR=$(dirname -- "$0")
@@ -19,6 +22,8 @@ N_ROWS=$N_ROWS
 N_COLS=$N_COLS
 BOARD="$BOARD"
 CURRENT_PLAYER=$CURRENT_PLAYER
+STARTING_PLAYER=$STARTING_PLAYER
+MODE=$MODE
 EOF
 }
 
@@ -113,12 +118,34 @@ function check_results()
     
     for layout in ${layouts[@]}
     do
-        [ $layout == $win_o ] && echo "o"
-        [ $layout == $win_x ] && echo "x"
+        [ $layout == $win_o ] && echo "o" && exit 0
+        [ $layout == $win_x ] && echo "x" && exit 0
     done
     
     # check if there is no draw
     [ "$(echo $board | tr -d 'xo')" == "" ] && echo "d"
+    exit 0
+}
+
+# Returns new board string with
+# random move made.
+function make_bot_move()
+{
+    local board=( $1 )
+    local empty_fields=()
+    for i in $(seq 0 ${#board[@]})
+    do
+        [ "${board[$i]}" == "." ] && empty_fields+=($i)
+    done
+    
+    # should be handled properly but will not happen
+    # as we check results before moves
+    [ ${#empty_fields[@]} -eq 0 ] && return 1
+    
+    local random_id=$((RANDOM % ${#empty_fields[@]}))
+    board[${empty_fields[$random_id]}]="x"
+    
+    echo "${board[@]}"
 }
 
 # main loop
@@ -132,6 +159,9 @@ function main_loop()
     local wrong_field=false
     local curr=$1
     local redraw=true
+    local msg=""
+    local player_info=""
+    [ ${MODE} == "pvb" ] && player_info="\n|Player - 'o' | Bot - 'x'|\n"
     clear
 
     while true;
@@ -141,12 +171,15 @@ function main_loop()
         if $redraw
         then
             clear
-            echo -en "Use 'wsad' to move cursor and 'p' to pick field. Press 'x' to exit.\n\n"
+            echo -en "Use 'wsad' to move cursor and 'p' to pick field.\nPress 'l' to save game for later. Press 'x' to exit.\n"
+            echo -e $player_info
             echo "Turn: '$curr'"
 
             character=$(get_board_element $y $x "${BOARD}")
             temp_board=$(set_board_element $y $x "$YELLOW$character$WHITE" "${BOARD}")
             print_board "${temp_board}"
+            echo "$msg"
+            msg=""
         fi
         redraw=true
         
@@ -156,20 +189,25 @@ function main_loop()
             echo -e "Game finished.\n"
             
             print_board "${BOARD}"
+            local winner="Player"
+            
+            [ "$MODE" == "pvb" -a "$result" == "x" ] && winner="Bot"
+            
+            desription="$winner '$result' wins."
 
-            desription="Player '$result' wins."
             [ "$result" == "d" ] && desription="There is no winner."
             
-            # remove save as game ended
-            rm -f $SCRIPT_DIR/.gamesave
-
             echo -e "\n$desription\nPress ENTER to exit"
             read
             exit 0
         fi
-        
-        # if game isn't finished yet lets save state
-        save_state
+
+        if [ "${MODE}" == "pvb" -a "${curr}" == "x" ]
+        then
+            BOARD=$(make_bot_move "${BOARD}")
+            curr="o"
+            continue
+        fi
 
         read -n 1 -sr input
         case $input in
@@ -200,6 +238,10 @@ function main_loop()
                 exit 0;
             ;;
 
+            l)
+                save_state
+                msg="Game saved successfully!"
+            ;;
             *)
                 redraw=false
             ;;
@@ -251,8 +293,11 @@ do
                     source "$SCRIPT_DIR/.gamesave" 
                     break
                 ;;
+                "New PvB")
+                    MODE="pvb"
+                    break;
+                ;;
                 *)
-                    echo "picked option ${options[$curr_option]}"
                     break;
                 ;;
                 esac
