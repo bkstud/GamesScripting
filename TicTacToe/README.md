@@ -2,9 +2,11 @@
 ## Features:
  - play player vs player
  - play bot vs player
- - save and load game
+ - save and load game (.gamesave file is created)
  - interactive menu and field game selection
 
 ## Demo:
-Gif:
-<img src="./out.giff" width="612" height="200" />
+- Gif:<br>
+![](out.gif)
+- Protection against repicking fields:<br>
+![](setfield.png)
