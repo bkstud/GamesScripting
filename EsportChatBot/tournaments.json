@@ -1,0 +1,20 @@
+[
+    {"name": "Counter Strike",
+     "description": "2 vs 2 - 3 maps",
+     "team size": 2,
+     "teams": ["blue", "green"],
+     "registered": {
+        "blue": [],
+        "green": []
+     }
+    },
+    {"name": "League of legends",
+     "description": "2 vs 2 - 1 round",
+     "teams": ["blue", "green"],
+     "team size": 2,
+     "registered": {
+        "blue": ["dude", "dude2"],
+        "green": []
+     }
+    }
+]

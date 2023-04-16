@@ -1,0 +1,4 @@
+results/*
+.rasa/*
+**/__pycache__/*
+models/*
