@@ -1,50 +1,54 @@
-version: "3.1"
-
+version: '3.1'
 intents:
-  - greet
-  - goodbye
-  - affirm
-  - deny
-  - mood_great
-  - mood_unhappy
-  - bot_challenge
-  - list_matches
-
+- affirm
+- bot_challenge
+- deny
+- goodbye
+- greet
+- inform
+- list_matches
+- mood_great
+- mood_unhappy
+- request_match_register
+- thanks
 responses:
   utter_greet:
-  - text: "Hey! How are you?"
-
+  - text: Hey! How are you?
   utter_cheer_up:
-  - text: "Here is something to cheer you up:"
-    image: "https://i.imgur.com/nGF1K8f.jpg"
-
+  - text: Maybe registering for one of our great tournament will help?
   utter_did_that_help:
-  - text: "Did that help you?"
-
+  - text: Did that help you?
   utter_happy:
-  - text: "Great, carry on!"
-
+  - text: Great, what can make you even feel better is registering for one of our great tournaments!
   utter_goodbye:
-  - text: "Bye"
-
+  - text: Bye
   utter_iamabot:
-  - text: "I am a bot, powered by Rasa."
-
-  utter_list_matches:
-  - text: "Here is a list of available matches: [...]"
-
-actions:  
+  - text: I am a bot, powered by Rasa.
+  utter_ask_match_name:
+  - text: What match would you like register to?
+  utter_ask_player_name:
+  - text: What is your nickname for registration?
+  utter_submit:
+  - text: Ok. Thanks!
+  utter_confirm_registration_possible:
+  - text: Of course I can register you to tournament
+actions:
+- utter_submit
+- utter_slots_values
+- utter_confirm_registration_possible
+- action_register_player
 - action_list_matches
-
+- utter_ask_player_name
+- utter_ask_match_name
+- utter_goodbye
+- utter_list_thanks
+- validate_match_form
 session_config:
   session_expiration_time: 60
   carry_over_slots_to_new_session: true
-
-
 entities:
-  - match_name
-  - player_name
-
+- player_name
+- match_name
 slots:
   match_name:
     type: text
@@ -56,9 +60,8 @@ slots:
     mappings:
     - type: from_entity
       entity: player_name
-
 forms:
   register_form:
     required_slots:
-        - match_name
-        - player_name
+    - match_name
+    - player_name

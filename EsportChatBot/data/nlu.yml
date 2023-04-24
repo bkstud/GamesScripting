@@ -1,5 +1,4 @@
 version: "3.1"
-
 nlu:
 - intent: greet
   examples: |
@@ -16,7 +15,6 @@ nlu:
     - goodmorning
     - goodevening
     - good afternoon
-
 - intent: goodbye
   examples: |
     - cu
@@ -29,7 +27,13 @@ nlu:
     - see you around
     - bye bye
     - see you later
-
+- intent: thanks
+  examples: |
+    - thank you
+    - thanks
+    - ty
+    - great thanks
+    - cool thank you
 - intent: affirm
   examples: |
     - yes
@@ -38,7 +42,6 @@ nlu:
     - of course
     - that sounds good
     - correct
-
 - intent: deny
   examples: |
     - no
@@ -48,7 +51,6 @@ nlu:
     - don't like that
     - no way
     - not really
-
 - intent: mood_great
   examples: |
     - perfect
@@ -65,7 +67,6 @@ nlu:
     - so so perfect
     - so good
     - so perfect
-
 - intent: mood_unhappy
   examples: |
     - my day was horrible
@@ -82,14 +83,12 @@ nlu:
     - extremly sad
     - so saad
     - so sad
-
 - intent: bot_challenge
   examples: |
     - are you a bot?
     - are you a human?
     - am I talking to a bot?
     - am I talking to a human?
-
 - intent: list_matches
   examples: |
     - what are available matches?
@@ -103,19 +102,54 @@ nlu:
     - list tournaments
     - tournaments
     - what are the tournaments?
-
-- synonym: matches
+    - list
+- intent: request_match_register
   examples: |
-    - tournaments
-
-- synonym: match
+    - I would like to register to tournament
+    - Register me to tournament
+    - Please register me to a tournament
+    - Can I register?
+    - Is it possible to register?
+    - can i register
+    - i want to register to tournament
+    - register
+    - i want to register
+    - register me to torunament
+    - i want to register to [lol]{"entity": "match_name", "value": "League of legends"} tournament
+- intent: inform
   examples: |
-    - tournament
-
+    - I would like to register to [cs](match_name) tournament
+    - I would like to register to [cs go](match_name) tournament
+    - Please register me to [counter strike](match_name) tournament
+    - I want to register to [lol](match_name)
+    - Can I register to [lol](match_name)?
+    - Register me to [League of Legends](match_name) match
+    - My nick is [bazko1](player_name)
+    - my nick is [testnick](player_name)
+    - Register [vaxer00](player_name)
+    - nickname is [polak320](player_name)
+    - I go by [foobarer](player_name)
+    - my nickname is [dude420](player_name)
+    - [lol]{"entity": "match_name", "value": "League of legends"}
+    - my nick is [bazko1](player_name)
+    - my nick is [bazi123](player_name)
+    - [cs]{"entity": "match_name", "value": "Counter strike"}
+    - my nickname is [bajojajo](player_name)
+    - my nickname is [bajojao1](player_name)
+    - register me to [cs]{"entity": "match_name", "value": "Counter strike"}
+    - my nick is [bajojajo](player_name)
+    - my nickname is [bazko1](player_name)
+    - register me to [lol]{"entity": "match_name", "value": "League of legends"} match
+    - my nick is [test00](player_name)
 - synonym: League of legends
   examples: |
     - lol
-
 - synonym: Counter strike
   examples: |
     - cs
+- synonym: matches
+  examples: |
+    - tournaments
+- synonym: match
+  examples: |
+    - tournament

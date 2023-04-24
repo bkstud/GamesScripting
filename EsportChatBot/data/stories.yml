@@ -15,26 +15,20 @@ stories:
   - action: utter_greet
   - intent: mood_unhappy
   - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: affirm
-  - action: utter_happy
-
-- story: sad path 2
-  steps:
-  - intent: greet
-  - action: utter_greet
-  - intent: mood_unhappy
-  - action: utter_cheer_up
-  - action: utter_did_that_help
-  - intent: deny
-  - action: utter_goodbye
 
 - story: list matches
   steps:
   - intent: list_matches
   - action: action_list_matches
+  - intent: thanks
+  - action: utter_list_thanks
 
-# - story: add player to match
-#   steps:
-#   - intent: list_matches
-#   - action: action_list_matches
+
+- story: register player
+  steps:
+  - intent: request_match_register
+  - action: utter_confirm_registration_possible
+  - action: register_form
+  - action: utter_submit
+  - action: action_register_player
+
