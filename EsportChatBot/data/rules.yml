@@ -25,3 +25,8 @@ rules:
   # The actions we want to run when the form is submitted.
   - action: utter_submit
   - action: action_register_player
+
+- rule: list matches
+  steps:
+  - intent: list_matches
+  - action: action_list_matches

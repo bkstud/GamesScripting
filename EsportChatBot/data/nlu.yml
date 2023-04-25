@@ -83,6 +83,7 @@ nlu:
     - list matches
     - matches
     - list match
+    - list teams
     - list tournaments
     - tournaments
     - what are the tournaments?
