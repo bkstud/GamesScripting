@@ -1,8 +1,6 @@
 version: '3.1'
 intents:
-- affirm
 - bot_challenge
-- deny
 - goodbye
 - greet
 - inform
@@ -16,8 +14,6 @@ responses:
   - text: Hey! How are you?
   utter_cheer_up:
   - text: Maybe registering for one of our great tournament will help?
-  utter_did_that_help:
-  - text: Did that help you?
   utter_happy:
   - text: Great, what can make you even feel better is registering for one of our great tournaments!
   utter_goodbye:
@@ -33,15 +29,16 @@ responses:
   utter_confirm_registration_possible:
   - text: Of course I can register you to tournament
 actions:
+- action_register_player
+- utter_greet
+- action_list_matches
+- utter_confirm_registration_possible
+- utter_happy
 - utter_submit
 - utter_slots_values
-- utter_confirm_registration_possible
-- action_register_player
-- action_list_matches
 - utter_ask_player_name
 - utter_ask_match_name
 - utter_goodbye
-- utter_list_thanks
 - validate_match_form
 session_config:
   session_expiration_time: 60

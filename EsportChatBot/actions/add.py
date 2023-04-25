@@ -56,9 +56,7 @@ class ActionRegisterPlayer(Action):
                 random_team = random.choice(non_full_teams)
                 msg = f"Successfully registered player '{player}' to tournament '{choosen_tournament}'."
                 msg += f"\nYour team is team '{random_team}' list match details to see your team members and oponents."
-                print(tournament['registered'].get(random_team))
                 tournament['registered'][random_team].append(player)
-                print(tournament['registered'][random_team])
                 write_json_to_file("tournaments.json", tournaments)
         
         dispatcher.utter_message(text=msg)

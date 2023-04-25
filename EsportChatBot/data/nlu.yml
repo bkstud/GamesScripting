@@ -34,23 +34,6 @@ nlu:
     - ty
     - great thanks
     - cool thank you
-- intent: affirm
-  examples: |
-    - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
-- intent: deny
-  examples: |
-    - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
 - intent: mood_great
   examples: |
     - perfect
@@ -67,6 +50,7 @@ nlu:
     - so so perfect
     - so good
     - so perfect
+    - good
 - intent: mood_unhappy
   examples: |
     - my day was horrible
@@ -103,6 +87,7 @@ nlu:
     - tournaments
     - what are the tournaments?
     - list
+    - yes list me matches
 - intent: request_match_register
   examples: |
     - I would like to register to tournament
@@ -116,6 +101,8 @@ nlu:
     - i want to register
     - register me to torunament
     - i want to register to [lol]{"entity": "match_name", "value": "League of legends"} tournament
+    - register me to match
+    - can i register?
 - intent: inform
   examples: |
     - I would like to register to [cs](match_name) tournament
@@ -141,6 +128,10 @@ nlu:
     - my nickname is [bazko1](player_name)
     - register me to [lol]{"entity": "match_name", "value": "League of legends"} match
     - my nick is [test00](player_name)
+    - register me to [lol]{"entity": "match_name", "value": "League of legends"}
+    - my nick is [foobar](player_name)
+    - register me to [cs]{"entity": "match_name", "value": "Counter strike"} match
+    - my nickname is [bkstud1](player_name)
 - synonym: League of legends
   examples: |
     - lol

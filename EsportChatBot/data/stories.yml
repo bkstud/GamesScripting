@@ -20,8 +20,6 @@ stories:
   steps:
   - intent: list_matches
   - action: action_list_matches
-  - intent: thanks
-  - action: utter_list_thanks
 
 
 - story: register player
@@ -32,3 +30,92 @@ stories:
   - action: utter_submit
   - action: action_register_player
 
+
+- story: interactive_story_1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+  - intent: list_matches
+  - action: action_list_matches
+  - intent: inform
+  - intent: request_match_register
+  - intent: inform
+  - intent: request_match_register
+  - action: utter_confirm_registration_possible
+  - action: register_form
+  - active_loop: register_form
+  - slot_was_set:
+    - requested_slot: match_name
+  - intent: inform
+    entities:
+    - match_name: League of legends
+  - slot_was_set:
+    - match_name: League of legends
+  - action: register_form
+  - slot_was_set:
+    - requested_slot: player_name
+  - intent: inform
+    entities:
+    - player_name: foobar
+  - slot_was_set:
+    - player_name: foobar
+  - action: register_form
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: utter_submit
+  - action: action_register_player
+  - slot_was_set:
+    - player_name: null
+  - slot_was_set:
+    - match_name: null
+
+- story: interactive_story_1
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+  - intent: list_matches
+  - action: action_list_matches
+  - intent: request_match_register
+  - action: utter_confirm_registration_possible
+  - action: register_form
+  - active_loop: register_form
+  - slot_was_set:
+    - requested_slot: match_name
+  - intent: inform
+    entities:
+    - match_name: Counter strike
+  - slot_was_set:
+    - match_name: Counter strike
+  - action: register_form
+  - slot_was_set:
+    - requested_slot: player_name
+  - intent: inform
+  - intent: inform
+    entities:
+    - player_name: bkstud1
+  - slot_was_set:
+    - player_name: bkstud1
+  - action: register_form
+  - slot_was_set:
+    - requested_slot: null
+  - active_loop: null
+  - action: utter_submit
+  - action: action_register_player
+  - slot_was_set:
+    - player_name: null
+  - slot_was_set:
+    - match_name: null
+  - intent: list_matches
+  - intent: list_matches
+  - action: action_default_fallback
+  - action: action_register_player
+  - slot_was_set:
+    - player_name: null
+  - slot_was_set:
+    - match_name: null
+  - intent: list_matches
