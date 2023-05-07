@@ -36,3 +36,18 @@
     transform: rotate(360deg);
   }
 }
+
+
+.games-list-table {
+  margin: 0px auto; 
+  border: 1px solid black;
+  padding: 5px;
+  border-collapse: collapse;;
+}
+
+.basketOrder {
+  margin: 0px auto; 
+  border: 1px solid black;
+  padding: 5px;
+  border-collapse: collapse;;
+}

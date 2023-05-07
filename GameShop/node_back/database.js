@@ -1,5 +1,6 @@
 const {Sequelize} = require('sequelize');
 var {initItem, Item} = require('./item')
+var {initOrder, Order} = require('./order')
 
 
 async function createTestData() {
@@ -7,6 +8,8 @@ async function createTestData() {
                        status: "ready", minPrice: 20, activationCode: "AA:BB"})
     await Item.create({name: "RPG game",
                        status: "beta", minPrice: 30, activationCode: "AA:BB"})
+    await Item.create({name: "Shooting game",
+                       status: "ready", minPrice: 40, activationCode: "AA:BB"})
 }
 
 
@@ -24,7 +27,9 @@ async function initialize() {
     }
     
     const Item = initItem(sequelize)
+    const Order = initOrder(sequelize)
     await Item.sync({force: true})
+    await Order.sync({force: true})
     createTestData()
  
     return sequelize   
