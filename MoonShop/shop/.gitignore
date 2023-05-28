@@ -1,0 +1,5 @@
+*_temp
+logs/*
+*.lua
+*.compiled
+*.log
