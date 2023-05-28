@@ -1,11 +1,10 @@
 package.path = '/usr/local/share/lua/5.1/lapis/?.lua;' .. package.path
-lapis = require "lapis"
 
-schema = require "lapis.db.schema"
+lapis = require "lapis"
 import Model from require "lapis.db.model"
 import open from require "lapis.db.sqlite"
-
-import create_table, types from schema
+import create_table, types from require "lapis.db.schema"
+import respond_to from require "lapis.application"
 
 
 create_table "items", {
@@ -34,19 +33,32 @@ Items\create {
 class extends lapis.Application
   "/demo": =>
     "Welcome to Lapis #{require "lapis.version"}!"
-
-  "/create": =>
-    Items\create {
-      name: "superuser"
-      picture_url: "1234"
-    }
-    "CREATING"
   
-  "/item": =>
-    items = Items\select!
-    json: items
+  "/item": respond_to {
+    GET: =>
+      items = Items\select!
+      json: items
+    
+    -- handle post single item
+    POST: =>
+      print("POST /item")
+      json: {"POST /item/"}
+    
+    -- handle delete single item
+    DELETE: =>
+      print("DELETE /item")
+      json: {"DELETE /item/"}
+  }
 
-  "/item/:id": =>
+  "/item/:id": respond_to {
+    GET: => 
       id = @params.id
       item = Items\find id
       json: item
+    
+    -- Handle update single item
+    PATCH: =>
+      id = @params.id
+      print("PATCH /item/#{id}")
+      json: {"PATCH /item/#{id}"}
+  }
