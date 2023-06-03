@@ -1,11 +1,22 @@
--- migrations module - seems not be working for in memory sqlite
--- in case of calling lapis migrate
 import create_table, types from require "lapis.db.schema"
-create_table "items", {
-  {"id", "INTEGER"}
-  {"name", "TEXT"}
-  {"price", "INTEGER"}
-  {"picture_url", "TEXT"}
-  
-  "PRIMARY KEY(id)"
+db = require "lapis.db"
+schema = require "lapis.db.schema"
+{
+  [1685791782]: =>
+    create_table "items", {
+      {"id", "INTEGER"}
+      {"name", "TEXT"}
+      {"price", "INTEGER"}
+      {"picture_url", "TEXT"}
+      {"category_id", "INTEGER"}
+      
+      "PRIMARY KEY(id)"
+    }
+
+    create_table "categories", {
+      {"id", "INTEGER"}
+      {"name", "TEXT"}
+      
+      "PRIMARY KEY(id)"
+    }
 }

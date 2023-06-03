@@ -2,19 +2,24 @@ package.path = '/usr/local/share/lua/5.1/lapis/?.lua;' .. package.path
 
 lapis = require "lapis"
 import Model from require "lapis.db.model"
-import open from require "lapis.db.sqlite"
-import create_table, types from require "lapis.db.schema"
 import respond_to, json_params from require "lapis.application"
 
+import Model from require "lapis.db.model"
 
 class Items extends Model
+  @relations: {
+    {"category", belongs_to: "Categories"}
+  }
 
+class Categories extends Model
+  @relations: {
+    {"items", has_many: "items"}
+  }
 
 class App extends lapis.Application
-
   "/demo": =>
     "Welcome to Lapis #{require "lapis.version"}!"
-  
+
   "/item": respond_to {
     GET: =>
       items = Items\select!
@@ -23,7 +28,7 @@ class App extends lapis.Application
     
     -- handle post single item
     POST: json_params =>
-      required = {"name", "price"}
+      required = {"name", "price", "category_id"}
       for req in *required
         if not @params[req]
           @write status: 404, json: {"missing required parameter: #{req}"}
@@ -32,6 +37,7 @@ class App extends lapis.Application
         name: @params.name,
         price: @params.price,
         picture_url: @params.picture_url
+        category_id: @params.category_id
       }
       json: it
     
@@ -58,4 +64,49 @@ class App extends lapis.Application
       item = @item
       item\delete!
       json: item
+  }
+
+  "/category": respond_to {
+    GET: =>
+      categories = Categories\select!
+      if not categories then categories={}
+      json: categories
+    
+    -- handle post single category
+    POST: json_params =>
+      required = {"name"}
+      for req in *required
+        if not @params[req]
+          @write status: 404, json: {"missing required parameter: #{req}"}
+          return
+      cat = Categories\create {
+        name: @params.name,
+        price: @params.price,
+        picture_url: @params.picture_url
+      }
+      json: cat
+    
+  }
+
+  "/category/:id": respond_to {
+    before: =>
+      @category = Categories\find @params.id
+      @write status: 422, json: {"category '#{@params.id}' not found"} unless @category
+
+    GET: =>
+      json: @category
+    
+    -- Handle update single category
+    PUT: json_params =>
+      cat = @category
+      updatable = {"name"}
+      to_update = {k, @params[k] for k in *updatable when @params[k]}
+      cat\update(to_update)
+      json: cat
+
+    -- handle delete single category
+    DELETE: =>
+      category = @category
+      category\delete!
+      json: category
   }

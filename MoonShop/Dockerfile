@@ -40,10 +40,13 @@ RUN luarocks --lua-version=5.1 install busted && \
     luarocks --lua-version=5.1 install lapis && \
 	luarocks --lua-version=5.1 install lsqlite3
 
-RUN luarocks --lua-version=5.1 path > /root/.bashrc
-RUN echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.bashrc
 WORKDIR /app
 COPY ./shop /app
 RUN useradd web && chown -R web /app 
+RUN mkdir -p /home/web
+RUN luarocks --lua-version=5.1 path > /home/web/.bashrc
+RUN echo 'export PATH="/usr/local/bin:$PATH"' >> /home/web/.bashrc
 USER web
+
+
 
