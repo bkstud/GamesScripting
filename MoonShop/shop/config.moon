@@ -5,4 +5,4 @@ config "development", ->
   code_cache "off"
   num_workers "1"
   sqlite ->
-    database ":memory:"
+    database "test.sqlite"

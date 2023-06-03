@@ -42,5 +42,8 @@ RUN luarocks --lua-version=5.1 install busted && \
 
 RUN luarocks --lua-version=5.1 path > /root/.bashrc
 RUN echo 'export PATH="/usr/local/bin:$PATH"' >> /root/.bashrc
-
 WORKDIR /app
+COPY ./shop /app
+RUN useradd web && chown -R web /app 
+USER web
+
