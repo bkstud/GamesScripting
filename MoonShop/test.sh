@@ -15,14 +15,20 @@ curl -s -X GET localhost:8080/item | jq
 echo -e "\n------------------------------------\n"
 
 
-echo "READ /item/1 "
+echo "READ ONE /item/1 "
 curl -s -X GET localhost:8080/item/1 | jq
 echo -e "\n------------------------------------\n"
 
 echo "UPDATE /item/2"
-curl -s -X PUT localhost:8080/item/1 | jq
+curl -s -X PUT -H "Content-type: application/json" \
+-d '{"name": "new_name", "price": 420, "picture_url": "new_url"}' \
+localhost:8080/item/2 | jq
 echo -e "\n------------------------------------\n"
 
-echo "DELETE"
+echo "DELETE /item/1"
 curl -s -X DELETE localhost:8080/item/1 | jq
 echo -e "\n------------------------------------"
+
+echo "AFTER OPERATIONS:"
+curl -s -X GET localhost:8080/item | jq
+echo -e "\n------------------------------------\n"
