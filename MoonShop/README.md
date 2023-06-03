@@ -13,6 +13,8 @@ moonc .
 lapis migrate
 lapis serve
 ```
-
+## Testing
+There is bash test.sh script which executes all CRUD endpoints using `curl`
+and print json outputs using `jq`.
 ## Demo
 ![](demo.gif)
