@@ -3,3 +3,4 @@ logs/*
 *.lua
 *.compiled
 *.log
+test.sqlite
