@@ -1,5 +1,6 @@
 #!/bin/bash
-
+# A test to call all CRUD operations on items and categories
+#
 echo "CREATE 2 categories and items assigned to them"
 curl -s -X POST   -H "Content-type: application/json" \
 -d '{"name": "groceries"}' \
@@ -59,3 +60,4 @@ curl -s -X GET localhost:8080/item | jq
 echo "categories.."
 curl -s -X GET localhost:8080/category | jq
 echo -e "\n------------------------------------\n"
+
