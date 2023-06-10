@@ -5,6 +5,24 @@ require 'open-uri'
 require "net/https"
 require "uri"
 require 'sqlite3'
+require 'optparse'
+
+options = {number_of_pages: 1}
+OptionParser.new do |opts|
+  opts.banner = "Usage: crawler.rb [options]"
+
+  opts.on('-k', '--keyword KEYWORD', 'Keyword to search for.') { |v| options[:keyword] = v }
+  opts.on('-n', '--number_page NUMBER', 'Number of pages to fetch information from. (default 1)') { |v| options[:number_of_pages] = Integer(v) }
+
+end.parse!
+
+required_options = [:keyword,]
+missing_options = required_options - options.keys
+unless missing_options.empty?
+  fail "Missing required options: #{missing_options}"
+end
+
+
 
 HEADERS = {
     'dnt' => '1',
@@ -32,13 +50,13 @@ db.execute "CREATE TABLE IF NOT EXISTS results(
   description TEXT)"
 
 # search keyword
-keyword = "graphics card"
+keyword = options[:keyword]
 search = keyword.gsub ' ', '+'
 
 search_url = "https://www.amazon.com/s?k=#{search}"
 
 # number of pages to fetch from
-number_of_pages = 1
+number_of_pages = options[:number_of_pages]
 
 
 puts "Will scrape #{number_of_pages} page from url: '#{search_url}'"
