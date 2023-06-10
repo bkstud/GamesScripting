@@ -4,6 +4,7 @@ require 'nokogiri'
 require 'open-uri'
 require "net/https"
 require "uri"
+require 'sqlite3'
 
 HEADERS = {
     'dnt' => '1',
@@ -20,46 +21,78 @@ HEADERS = {
 
 BASE_PAGE = "https://amazon.com"
 
+db = SQLite3::Database.open 'amazon_items.sqlite'
+
+db.execute "CREATE TABLE IF NOT EXISTS results(
+  id INTEGER PRIMARY KEY,
+  title TEXT NOT NULL,
+  url TEXT NOT NULL,
+  price TEXT NOT NULL,
+  page_url TEXT NOT NULL,
+  description TEXT)"
+
 # search keyword
 keyword = "graphics card"
-# TODO: base on keyword
-search_url = 'https://www.amazon.com/s?k=graphics+card'
+search = keyword.gsub ' ', '+'
+
+search_url = "https://www.amazon.com/s?k=#{search}"
+
 # number of pages to fetch from
 number_of_pages = 1
 
 
-puts search_url
-# open uri
-call = URI.open(search_url, **HEADERS)
-puts call.status
-#File.open("out.html", 'w') { |file| file.write(call.read()) }
-# Parse HTML document
-doc = Nokogiri::HTML(call)
+puts "Will scrape #{number_of_pages} page from url: '#{search_url}'"
 
-i = 0
+fetched_num = 0
 
-doc.css('div[data-component-type="s-search-result"]').each do |item|
-  link = item.css('h2 a.a-link-normal.a-text-normal')
-  title = link.text
-  url = BASE_PAGE + link.attribute('href').value
-  price = item.css('span.a-price:nth-of-type(1) span.a-offscreen')
-  price = price.text
+(1..number_of_pages).each do |page_num|
 
-  item_call = URI.open(url, **HEADERS)
-  item_doc = Nokogiri::HTML(item_call)
-  description = item_doc.css('#productDescription')
-  if ! description
-    puts "failed to find desc"
-  else
-    description = description.text.lstrip
+  search_url += "&page=#{page_num}"
+
+  begin
+    call = URI.open(search_url, **HEADERS)
+  rescue OpenURI::HTTPError => e
+    STDERR.puts "Failed to fetch url: '#{search_url}'.\nException: '#{e}'"
+    next
+  end 
+
+  doc = Nokogiri::HTML(call)
+
+  it = 0
+  doc.css('div[data-component-type="s-search-result"]').each do |item|
+    link = item.css('h2 a.a-link-normal.a-text-normal')
+    title = link.text
+    url = BASE_PAGE + link.attribute('href').value
+    price = item.css('span.a-price:nth-of-type(1) span.a-offscreen')
+    price = price.text
+
+    description = ""
+    begin
+      item_call = URI.open(url, **HEADERS)
+      item_doc = Nokogiri::HTML(item_call)
+      description = item_doc.css('#productDescription')
+    rescue OpenURI::HTTPError => e
+      STDERR.puts "Failed to fetch url: '#{url}'. Error status: '#{item_call.status.join ' '}'"
+    end
+
+    if description == ""
+      STDERR.puts "Failed to find desc for '#{link}'"
+    else
+      description = description.text.lstrip
+    end
+    
+    puts "Fetching page #{page_num} item number: #{it} into db..." 
+
+    db.execute "INSERT INTO results (title, url, price, page_url, description) " \
+      "VALUES (?, ?, ?, ?, ?)", \
+      title, url, price, search_url, description
+
+    it += 1
   end
-  
-  puts "number: " + String(i)
-
-  puts title
-  puts price
-  puts url
-  puts description
-
-  i += 1
+  fetched_num += it
 end
+
+db.close if db
+
+puts "Success! Fetched #{fetched_num} of rows into database."
+
