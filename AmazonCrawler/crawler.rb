@@ -11,8 +11,8 @@ options = {number_of_pages: 1}
 OptionParser.new do |opts|
   opts.banner = "Usage: crawler.rb [options]"
 
-  opts.on('-k', '--keyword KEYWORD', 'Keyword to search for.') { |v| options[:keyword] = v }
-  opts.on('-n', '--number_page NUMBER', 'Number of pages to fetch information from. (default 1)') { |v| options[:number_of_pages] = Integer(v) }
+  opts.on('-k', '--keyword KEYWORD', 'Keyword to search for. (required)') { |v| options[:keyword] = v }
+  opts.on('-n', '--number_page NUMBER', 'Number of pages to fetch information from. (optional default: 1)') { |v| options[:number_of_pages] = Integer(v) }
 
 end.parse!
 
